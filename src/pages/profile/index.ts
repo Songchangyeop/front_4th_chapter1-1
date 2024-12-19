@@ -18,7 +18,7 @@ export class ProfilePage {
 
   render() {
     return `
-      <div class="bg-gray-100 min-h-screen flex justify-center">
+      <div id="profile" class="bg-gray-100 min-h-screen flex justify-center">
         <div class="max-w-md w-full">
         ${this.header.render()}
           <main class="p-4">

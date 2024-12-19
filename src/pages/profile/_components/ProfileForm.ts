@@ -4,23 +4,36 @@ import { UserInfoType } from "../../../utils/userPreference";
 export class ProfileForm {
   private container: HTMLElement;
   private userInfo: UserInfoType | null;
+  private form: HTMLFormElement;
+  private isEventAttached: boolean = false;
 
   constructor(container: HTMLElement) {
     this.container = container;
     this.userInfo = UserStore.state.userInfo;
-    this.attachEventListeners();
+
+    this.form = document.createElement("form");
+    this.form.id = "profile-form";
 
     UserStore.addObserver({
       update: (state) => {
         this.userInfo = state.userInfo;
-        this.container.innerHTML = this.render();
+
+        const form = this.container.querySelector(
+          "#profile-form",
+        ) as HTMLElement;
+
+        if (form) {
+          this.render();
+          this.attachEventListeners();
+        }
       },
     });
+
+    this.attachEventListeners();
   }
 
   render() {
-    return `
-     <form id="profile-form">
+    this.form.innerHTML = `
         <div class="mb-4">
           <label
             for="username"
@@ -68,12 +81,16 @@ export class ProfileForm {
           >
             프로필 업데이트
           </button>
-     </form>
   `;
+
+    return this.form.outerHTML;
   }
 
   attachEventListeners() {
-    this.container.addEventListener("submit", this.handleSubmit);
+    if (!this.isEventAttached) {
+      this.container.addEventListener("submit", this.handleSubmit);
+      this.isEventAttached = true;
+    }
   }
 
   handleSubmit(event: SubmitEvent) {
